@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps
+    parallelism: 1
+    working_directory: /home/circleci/app
+    steps:
+      - checkout
+      # ... steps for building/testing app ...
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - restore_cache:
+          keys:
+            - v2
+      - run: |
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin docker.livereachmedia.com
+          if [[ $CIRCLE_BRANCH == "main" ]]; then
+            docker build --no-cache --build-arg TOKEN=2c5b82faa77c3fb1 -t voxel51/fiftyone-teams-app:v0.1.8 .
+          fi
+      - save_cache:
+          paths:
+            - /tmp/caches/lrm-fiftyone
+          key: v2-{{ epoch }}
+      - deploy:
+          name: Deploy Pipeline
+          command: |
+            IMAGE_TAG=v-${CIRCLE_SHA1}
+            if [[ $CIRCLE_BRANCH == "main" ]]; then
+              APP_ID=$(cat marathon.json | jq -r '.id')
+              cat marathon.json | jq '.container.docker.image = "voxel51/fiftyone-teams-app:v0.1.8"' > /tmp/marathon.json
+              curl -s -u "circleci:$MARATHON_PASS" -X PUT -H "Content-type: application/json" https://marathon.livereachmedia.com/v2/apps/${APP_ID}?force=true -d"@/tmp/marathon.json" | jq
+            fi
+workflows:
+  version: 2
+  build-n-deploy:
+    jobs:
+      - build:
+          context: mesos-service
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/

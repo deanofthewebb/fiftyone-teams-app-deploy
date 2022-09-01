@@ -1,0 +1,59 @@
+{
+    "id": "fiftyone",
+    "cpus": 1,
+    "mem": 1024,
+    "instances": 1,
+    "networks": [
+        {
+            "mode": "container/bridge"
+        }
+    ],
+    "container": {
+        "type": "DOCKER",
+        "docker": {
+            "image": "voxel51/fiftyone-teams-app:v0.1.8"
+        },
+        "portMappings": [
+            {
+                "containerPort": 0,
+                "hostPort": 0
+            }
+        ]
+    },
+    "env": {
+        "FIFTYONE_DATABASE_URI": "mongodb+srv://livereach:Mmo0y7FUTOSD9BKV@fiftyone-teams.3g3tb.mongodb.net/?retryWrites=true&w=majority",
+        "FIFTYONE_TEAMS_ORGANIZATION": "org_xW1NbItyh3Nllwlq",
+        "FIFTYONE_TEAMS_CLIENT_ID": "7ZUcEKGtWP02RnctvUZJQ6NqlVl5MA0c",
+        "FIFTYONE_MEDIA_CACHE_APP_IMAGES": false,
+        "FIFTYONE_DATABASE_NAME": "fiftyone",
+        "FIFTYONE_DATABASE_ADMIN": false,
+        "FIFTYONE_MEDIA_CACHE_SIZE_BYTES": -1,
+        "AWS_CONFIG_FILE": "/mnt/mesos/sandbox/aws-credentials"
+    },
+    "ports": [
+        0
+    ],
+    "upgradeStrategy": {
+        "minimumHealthCapacity": 0.5,
+        "maximumOverCapacity": 0
+    },
+    "healthChecks": [],
+    "constraints": [
+        [
+            "group",
+            "CLUSTER",
+            "app"
+        ],
+        [
+            "hostname",
+            "UNIQUE"
+        ]
+    ],
+    "labels": {
+        "traefik.frontend.rule": "Host:fiftyone.edge.infra.livereachmedia.com,fiftyone.livereachmedia.com"
+    },
+    "args": [],
+    "uris": [
+        "https://s3.us-east-2.amazonaws.com/vpc-a045a9c8.infra.livereachmedia.com/config/aws-credentials"
+    ]
+}
