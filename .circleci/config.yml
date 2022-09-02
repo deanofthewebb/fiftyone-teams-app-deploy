@@ -16,7 +16,7 @@ jobs:
       - run: |
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin docker.livereachmedia.com
           if [[ $CIRCLE_BRANCH == "main" ]]; then
-            docker build --no-cache --build-arg TOKEN=2c5b82faa77c3fb1 -t voxel51/fiftyone-teams-app:v0.1.8 .
+            docker build --no-cache --build-arg TOKEN=2c5b82faa77c3fb1 -t docker.livereachmedia.com/fiftyone-teams-app:v0.1.8:v-$CIRCLE_SHA1 .
           fi
       - save_cache:
           paths:
@@ -28,7 +28,7 @@ jobs:
             IMAGE_TAG=v-${CIRCLE_SHA1}
             if [[ $CIRCLE_BRANCH == "main" ]]; then
               APP_ID=$(cat marathon.json | jq -r '.id')
-              cat marathon.json | jq '.container.docker.image = "voxel51/fiftyone-teams-app:v0.1.8"' > /tmp/marathon.json
+              cat marathon.json | jq '.container.docker.image = "docker.livereachmedia.com/fiftyone-teams-app:v0.1.8:'"$IMAGE_TAG"'"' > /tmp/marathon.json
               curl -s -u "circleci:$MARATHON_PASS" -X PUT -H "Content-type: application/json" https://marathon.livereachmedia.com/v2/apps/${APP_ID}?force=true -d"@/tmp/marathon.json" | jq
             fi
 workflows:
