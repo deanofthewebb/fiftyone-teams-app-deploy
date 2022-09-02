@@ -26,7 +26,7 @@
         "FIFTYONE_TEAMS_CLIENT_ID": "7ZUcEKGtWP02RnctvUZJQ6NqlVl5MA0c",
         "FIFTYONE_MEDIA_CACHE_APP_IMAGES": "false",
         "FIFTYONE_DATABASE_NAME": "fiftyone",
-        "FIFTYONE_DATABASE_ADMIN": "false",
+        "FIFTYONE_DATABASE_ADMIN": "true",
         "FIFTYONE_MEDIA_CACHE_SIZE_BYTES": "-1",
         "AWS_CONFIG_FILE": "/mnt/mesos/sandbox/aws-credentials"
     },
